@@ -1,7 +1,7 @@
 <?php
 namespace App\Controller;
 
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use App\Controller\ParentController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -11,19 +11,23 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Entity;
 
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 
+use App\Service\StaticFileGenerator;
+
 /**
  * @Route("/")
  */
-class LandingController extends AbstractController
+class LandingController extends ParentController
 {
     /**
      * @Route("/", name="landing_page", methods={"GET"})
      */
     public function landing_page(
-        Request $request
+        Request $request,
+        StaticFileGenerator $file_generator
     ): Response
     {
         try{
+            $file_generator->render('landing.html.twig');
             return $this->render('landing.html.twig');
         } catch(\Exception $e){
             return new Response($e->getMessage(), 500);
@@ -37,7 +41,7 @@ class LandingController extends AbstractController
     ): Response
     {
         try{
-            return new BinaryFileResponse(__DIR__ . '/../../templates/static.html');
+            return $this->renderStatic('static.html');
         } catch(\Exception $e){
             return new Response($e->getMessage(), 500);
         }
@@ -52,6 +56,9 @@ class LandingController extends AbstractController
     {
         try{
             $user = $this->getUser();
+            if(!$user){
+                throw new \Exception("Not logged in");
+            }
             return new JsonResponse(array('ok' => true, 'token' => $JWTManager->create($user)), 200);
         } catch(\Exception $e){
             return new JsonResponse(array('ok' => false, 'error' => $e->getMessage()), 500);
