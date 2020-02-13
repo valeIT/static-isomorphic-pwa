@@ -1,0 +1,15 @@
+{% extends 'base.html.twig' %}
+
+{% block javascripts %}
+<script>
+fetch('/test')
+.then(response => response.json())
+.then(response => {
+    console.log(response)
+})
+</script>
+{% endblock %}
+
+{% block body %}
+<p>a landing page</p>
+{% endblock %}
