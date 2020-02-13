@@ -1,5 +1,7 @@
 
 ###> symfony/framework-bundle ###
+/.env
+/config/jwt/private.pem
 /.env.local
 /.env.local.php
 /.env.*.local
