@@ -12,6 +12,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Entity;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 
 use App\Service\StaticFileGenerator;
+use App\Entity\ToDoItem;
 
 /**
  * @Route("/")
@@ -26,7 +27,7 @@ class LandingController extends ParentController
     ): Response
     {
         try{
-            $data = $request->request->all();
+            $data = $this->generateData();
             return $this->render('landing.html.twig', $data);
         } catch(\Exception $e){
             return new Response($e->getMessage(), 500);
@@ -43,8 +44,8 @@ class LandingController extends ParentController
     {
         try{
             // the file is pre-rendered
-            $data = $request->request->all();
-            $filename = $file_generator->render('landing.html.twig', $data);
+            $data = $this->generateData();
+            $filename = $file_generator->render('landing.html.twig', 'landing.html', $data);
 
             // the file is served as a BinaryFileResponse
             return $this->renderStatic($filename);
@@ -70,5 +71,17 @@ class LandingController extends ParentController
         } catch(\Exception $e){
             return new JsonResponse(array('ok' => false, 'error' => $e->getMessage()), 500);
         }
+    }
+
+    private function generateData(){
+        $data = ['list' => []];
+        $results = $this->getDoctrine()->getRepository(ToDoItem::class)->findBy(array(),array(),10,0);
+        foreach($results as $result){
+            $data['list'][] = [
+                'uuid' => $result->getUuid(),
+                'description' => $result->getDescription()
+            ];
+        }
+        return $data;
     }
 }

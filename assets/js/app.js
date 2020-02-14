@@ -3,4 +3,8 @@ var React = require('react')
 var ReactDOM = require('react-dom')
 import Component from './component'
 
-ReactDOM.render(<Component/>, document.getElementById('react-app'));
+ReactDOM.render(
+    <Component
+        todo_list={list}
+    />, document.getElementById('react-app')
+);

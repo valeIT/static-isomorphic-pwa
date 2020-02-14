@@ -17,12 +17,9 @@ class StaticFileGenerator {
         $this->folder = __DIR__ . '/../../static/';
     }
 
-    public function render($template_filename, $args = []){
-        $original_filename = pathinfo($template_filename, PATHINFO_FILENAME);
-        $safe_filename = transliterator_transliterate('Any-Latin; Latin-ASCII; [^A-Za-z0-9_] remove; Lower()', $original_filename);
-        $extension = pathinfo($original_filename, PATHINFO_EXTENSION);
-        $filename = $safe_filename.'-'.uniqid().'.'.$extension;
-
+    public function render($template_filename, $filename, $args = []){
+        $args['version'] = $this->version;
+        
         file_put_contents(
             $this->folder . $filename,
             $this->templating->render(
@@ -35,3 +32,10 @@ class StaticFileGenerator {
     }
 
 }
+
+// how to generate a random filename:
+//
+// $original_filename = pathinfo($template_filename, PATHINFO_FILENAME);
+// $safe_filename = transliterator_transliterate('Any-Latin; Latin-ASCII; [^A-Za-z0-9_] remove; Lower()', $original_filename);
+// $extension = pathinfo($original_filename, PATHINFO_EXTENSION);
+// $filename = $safe_filename.'-'.uniqid().'.'.$extension;

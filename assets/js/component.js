@@ -7,7 +7,7 @@ export default class Component extends React.Component{
 
         this.state = {
             logged_in: false,
-            loading: true
+            loading: false
         }
     }
 
@@ -24,14 +24,17 @@ export default class Component extends React.Component{
     }
 
     render(){
+        const items = this.props.todo_list.map((item, index) =>
+            <li key={index}>{item.description}</li>
+        );
         return(
-            <div>
+            <>
                 {this.state.loading ? (
-                    <p>loading...</p>
+                    <div className="lds-hourglass"></div>
                 ) : (
-                    <p>{this.state.logged_in ? "logged in" : "not logged in"}</p>
+                    <ul>{items}</ul>
                 )}
-            </div>
+            </>
         )
     }
 }
