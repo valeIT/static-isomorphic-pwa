@@ -22,30 +22,37 @@ class LandingController extends ParentController
      * @Route("/", name="landing_page", methods={"GET"})
      */
     public function landing_page(
+        Request $request
+    ): Response
+    {
+        try{
+            $data = $request->request->all();
+            return $this->render('landing.html.twig', $data);
+        } catch(\Exception $e){
+            return new Response($e->getMessage(), 500);
+        }
+    }
+
+    /**
+     * @Route("/static", name="static_page", methods={"GET"})
+     */
+    public function static_page(
         Request $request,
         StaticFileGenerator $file_generator
     ): Response
     {
         try{
-            $file_generator->render('landing.html.twig');
-            return $this->render('landing.html.twig');
+            // the file is pre-rendered
+            $data = $request->request->all();
+            $filename = $file_generator->render('landing.html.twig', $data);
+
+            // the file is served as a BinaryFileResponse
+            return $this->renderStatic($filename);
         } catch(\Exception $e){
             return new Response($e->getMessage(), 500);
         }
     }
-    /**
-     * @Route("/static", name="static_page", methods={"GET"})
-     */
-    public function static_page(
-        Request $request
-    ): Response
-    {
-        try{
-            return $this->renderStatic('static.html');
-        } catch(\Exception $e){
-            return new Response($e->getMessage(), 500);
-        }
-    }
+
     /**
      * @Route("/test", name="api_test", methods={"GET"})
      */
