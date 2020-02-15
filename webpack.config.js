@@ -1,4 +1,17 @@
 var Encore = require('@symfony/webpack-encore');
+// var OfflinePlugin = require('offline-plugin');
+const purgecss = require('@fullhuman/postcss-purgecss')({
+
+  // Specify the paths to all of the template files in your project
+  content: [
+    './templates/**/*.html.twig',
+    './assets/js/**/*.js',
+    // etc.
+  ],
+
+  // Include any special characters you're using in this regular expression
+  defaultExtractor: content => content.match(/[\w-/:]+(?<!:)/g) || []
+})
 
 // Manually configure the runtime environment if not already configured yet by the "encore" command.
 // It's useful when you use tools that rely on webpack.config.js file.
@@ -24,6 +37,7 @@ Encore
      * and one CSS file (e.g. app.css) if your JavaScript imports CSS.
      */
     .addEntry('app', './assets/js/app.js')
+    // .addEntry('sw', './assets/js/sw.js')
     //.addEntry('page1', './assets/js/page1.js')
     //.addEntry('page2', './assets/js/page2.js')
 
@@ -32,6 +46,7 @@ Encore
 
     // will require an extra script tag for runtime.js
     // but, you probably want this, unless you're building a single-page app
+    // .enableSingleRuntimeChunk()
     .enableSingleRuntimeChunk()
 
     /*
@@ -45,7 +60,7 @@ Encore
     .enableBuildNotifications()
     .enableSourceMaps(!Encore.isProduction())
     // enables hashed filenames (e.g. app.abc123.css)
-    .enableVersioning(Encore.isProduction())
+    // .enableVersioning(Encore.isProduction())
 
     // enables @babel/preset-env polyfills
     .configureBabelPresetEnv((config) => {
@@ -70,8 +85,33 @@ Encore
 
     // uncomment if you use API Platform Admin (composer req api-admin)
     .enableReactPreset()
-    .enablePostCssLoader()
+    .enablePostCssLoader(options => {
+        options.plugins = [
+            require('tailwindcss'),
+            require('autoprefixer'),
+        ];
+        if (Encore.isProduction()) {
+            options.plugins.push(purgecss);
+        }
+    })
     //.addEntry('admin', './assets/js/admin.js')
 ;
 
-module.exports = Encore.getWebpackConfig();
+var config = Encore.getWebpackConfig();
+// push offline-plugin
+// config.plugins.push(new OfflinePlugin({
+//     "strategy": "changed",
+//     "responseStrategy": "cache-first",
+//     "caches": {
+//         "main": [
+//             'app.css', //offline plugin doesn't know about build file , if I added build in it , it will show something like : OfflinePlugin: Cache pattern [build/images/*] did not match any assets
+//             'app.js',
+//             'runtime.js',
+//             'manifest.json',
+//             // 'fonts/*',
+//             // 'images/*'
+//         ]
+//     },
+//     'appShell': '/'
+// }));
+module.exports = config;

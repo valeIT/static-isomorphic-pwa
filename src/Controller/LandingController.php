@@ -55,6 +55,29 @@ class LandingController extends ParentController
     }
 
     /**
+     * @Route("/load", name="load_page", methods={"GET"})
+     */
+    public function load_page(
+        Request $request
+    ): Response
+    {
+        try{
+            $list = [];
+            $offset = $request->query->get('offset');
+            $results = $this->getDoctrine()->getRepository(ToDoItem::class)->findBy(array(),array(),10, $offset * 10);
+            foreach($results as $result){
+                $list[] = [
+                    'uuid' => $result->getUuid(),
+                    'description' => $result->getDescription()
+                ];
+            }
+            return new JsonResponse(['ok' => true, 'list' => $list], 200);
+        } catch(\Exception $e){
+            return new Response($e->getMessage(), 500);
+        }
+    }
+
+    /**
      * @Route("/test", name="api_test", methods={"GET"})
      */
     public function api_test(

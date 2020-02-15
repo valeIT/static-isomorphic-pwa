@@ -1,6 +1,7 @@
 {
     "devDependencies": {
         "@babel/preset-react": "^7.8.3",
+        "@fullhuman/postcss-purgecss": "^2.0.6",
         "@symfony/webpack-encore": "^0.28.2",
         "autoprefixer": "^9.7.4",
         "core-js": "^3.0.0",
@@ -19,7 +20,10 @@
         "build": "encore production --progress"
     },
     "dependencies": {
+        "glob-all": "^3.1.0",
+        "offline-plugin": "^5.0.7",
         "prop-types": "^15.7.2",
+        "purgecss-webpack-plugin": "^2.0.6",
         "react": "^16.12.0",
         "react-dom": "^16.12.0",
         "tailwindcss": "^1.2.0"

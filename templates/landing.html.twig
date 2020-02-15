@@ -4,6 +4,9 @@
 {% block javascripts %}
 <script>
     var list = {{list|json_encode|raw}}
+    {% if app.environment == 'prod' %}
+    {% include 'sw.js.twig' only %}
+    {% endif %}
 </script>
 {{ encore_entry_script_tags('app') }}
 {% endblock %}
@@ -12,12 +15,13 @@
 <main>
     <h1>Landing Page</h1>
     {% apply spaceless %}
-    <div id="react-app">
-        <ul>
-        {% for item in list %}
-        <li>{{item.description}}</li>
-        {% endfor %}
-        </ul>
+    <div id="react-app" class="text-center">
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-20 p-10">
+            {% for item in list %}
+              <div class="shadow-2xl bg-white max-w-sm p-10">{{item.description}}</div>
+            {% endfor %}
+        </div>
+        <a href="/login">Log in to load tasks</a>
     </div>
     {% endapply %}
 </main>
